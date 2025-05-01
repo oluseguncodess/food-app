@@ -97,6 +97,7 @@ export default function Checkout() {
         {error && <Error title="Failed to submit order" message="NOT FOUND" />}
 
         <p className="modal-actions">{actions}</p>
+        {formState && null}
       </form>
     </Modal>
   );
