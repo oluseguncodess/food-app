@@ -3,8 +3,9 @@ import logo from "../assets/logo.jpg";
 import Button from "./UI/Button";
 import CartContext from "../store/CartContext";
 import UserProgressContext from "../store/UserProgressContext";
+import { useSelector } from "react-redux";
 export default function Header() {
-  const { items } = useContext(CartContext);
+  const items = useSelector(state => state.cart.items)
   const {showCart} = useContext(UserProgressContext);
 
   const totalNumberOfItems = items.reduce((totalNumberOfItems, item) => {

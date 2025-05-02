@@ -18,8 +18,8 @@ const requestConfig = {
 };
 
 export default function Checkout() {
-  const { items, clearCart } = useContext(CartContext);
-  const cartItem = useSelector((state) => state.cart.items);
+  const { clearCart } = cartActions;
+  const items = useSelector((state) => state.cart.items);
   const dispatch = useDispatch();
 
   const { progress, hideCheckOut } = useContext(UserProgressContext);
@@ -39,8 +39,7 @@ export default function Checkout() {
 
   function handleFinish() {
     hideCheckOut();
-    clearCart();
-    dispatch(cartActions.clearCart());
+    dispatch(clearCart());
     clearData();
   }
 
