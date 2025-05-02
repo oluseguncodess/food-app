@@ -5,12 +5,23 @@ import { currencyFormatter } from "../../util/formatting";
 import Button from "../UI/Button";
 import UserProgressContext from "../../store/UserProgressContext";
 import CartItem from "../CartItem";
+import { useDispatch, useSelector } from "react-redux";
+import { cartActions } from "../../store/cart";
 
 export default function Cart() {
   const { items, addItem, removeItem } = useContext(CartContext);
+
+  const dispatch = useDispatch()
+
+  const cartItem = useSelector((state) => state.cart.items)
+
   const { progress, hideCart, showCheckOut } = useContext(UserProgressContext);
 
   const cartTotal = items.reduce((totalPrice, item) => {
+    return totalPrice + item.quantity * item.price;
+  }, 0);
+
+  const cartTotall = cartItem.reduce((totalPrice, item) => {
     return totalPrice + item.quantity * item.price;
   }, 0);
 
@@ -26,23 +37,23 @@ export default function Cart() {
     <Modal className="cart" open={progress === "cart"} onClose={progress === 'cart' ? handleCloseCart : null}>
       <h2>Your Cart</h2>
       <ul>
-        {items.map((item) => (
+        {cartItem.map((item) => (
           <CartItem
             key={item.id}
             name={item.name}
             quantity={item.quantity}
             price={item.price}
-            onDecrease={() => removeItem(item.id)}
-            onIncrease={() => addItem(item)}
+            onDecrease={() => dispatch(cartActions.removeItem(item.id))}
+            onIncrease={() => dispatch(cartActions.addItem(item))}
           />
         ))}
       </ul>
-      <p className="cart-total">{currencyFormatter.format(cartTotal)}</p>
+      <p className="cart-total">{currencyFormatter.format(cartTotall)}</p>
       <p className="modal-actions">
         <Button textOnly onClick={handleCloseCart}>
           Close
         </Button>
-        {items.length > 0 && <Button onClick={handleOpenCheckout}>Go to checkout</Button>}
+        {cartItem.length > 0 && <Button onClick={handleOpenCheckout}>Go to checkout</Button>}
       </p>
     </Modal>
   );
