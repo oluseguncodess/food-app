@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import Modal from "../UI/Modal";
-import CartContext from "../../store/CartContext";
 import { currencyFormatter } from "../../util/formatting";
 import Button from "../UI/Button";
 import UserProgressContext from "../../store/UserProgressContext";
@@ -9,19 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../../store/cart";
 
 export default function Cart() {
-  const { items, addItem, removeItem } = useContext(CartContext);
+  const dispatch = useDispatch();
 
-  const dispatch = useDispatch()
-
-  const cartItem = useSelector((state) => state.cart.items)
+  const cartItem = useSelector((state) => state.cart.items);
 
   const { progress, hideCart, showCheckOut } = useContext(UserProgressContext);
 
-  const cartTotal = items.reduce((totalPrice, item) => {
-    return totalPrice + item.quantity * item.price;
-  }, 0);
-
-  const cartTotall = cartItem.reduce((totalPrice, item) => {
+  const cartTotal = cartItem.reduce((totalPrice, item) => {
     return totalPrice + item.quantity * item.price;
   }, 0);
 
@@ -30,11 +23,15 @@ export default function Cart() {
   }
 
   function handleOpenCheckout() {
-    showCheckOut()
+    showCheckOut();
   }
 
   return (
-    <Modal className="cart" open={progress === "cart"} onClose={progress === 'cart' ? handleCloseCart : null}>
+    <Modal
+      className="cart"
+      open={progress === "cart"}
+      onClose={progress === "cart" ? handleCloseCart : null}
+    >
       <h2>Your Cart</h2>
       <ul>
         {cartItem.map((item) => (
@@ -48,12 +45,14 @@ export default function Cart() {
           />
         ))}
       </ul>
-      <p className="cart-total">{currencyFormatter.format(cartTotall)}</p>
+      <p className="cart-total">{currencyFormatter.format(cartTotal)}</p>
       <p className="modal-actions">
         <Button textOnly onClick={handleCloseCart}>
           Close
         </Button>
-        {cartItem.length > 0 && <Button onClick={handleOpenCheckout}>Go to checkout</Button>}
+        {cartItem.length > 0 && (
+          <Button onClick={handleOpenCheckout}>Go to checkout</Button>
+        )}
       </p>
     </Modal>
   );
