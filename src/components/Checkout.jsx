@@ -7,6 +7,8 @@ import Button from "./UI/Button";
 import UserProgressContext from "../store/UserProgressContext";
 import useHttp from "../hooks/useHttp";
 import Error from "../componetns/UI/Error";
+import { useDispatch, useSelector } from "react-redux";
+import { cartActions } from "../store/cart";
 
 const requestConfig = {
   method: "POST",
@@ -17,14 +19,15 @@ const requestConfig = {
 
 export default function Checkout() {
   const { items, clearCart } = useContext(CartContext);
+  const cartItem = useSelector((state) => state.cart.items);
+  const dispatch = useDispatch();
+
   const { progress, hideCheckOut } = useContext(UserProgressContext);
 
-  const {
-    sendRequest,
-    error,
-    data,
-    clearData,
-  } = useHttp("http://localhost:3000/orders", requestConfig);
+  const { sendRequest, error, data, clearData } = useHttp(
+    "http://localhost:3000/orders",
+    requestConfig
+  );
 
   const cartTotal = items.reduce((totalPrice, item) => {
     return totalPrice + item.price * item.quantity;
@@ -37,6 +40,7 @@ export default function Checkout() {
   function handleFinish() {
     hideCheckOut();
     clearCart();
+    dispatch(cartActions.clearCart());
     clearData();
   }
 
@@ -53,7 +57,10 @@ export default function Checkout() {
     );
   }
 
-  const [formState, formAction, isSending] = useActionState(checkoutAction, null)
+  const [formState, formAction, isSending] = useActionState(
+    checkoutAction,
+    null
+  );
 
   let actions = (
     <>
